@@ -88,6 +88,11 @@ private slots:
   void probeCalibration();
 
   /**
+   * \brief Implements a pivot calibration, for navigation with a sharp object
+   */
+  void pivotCalibration();
+
+  /**
    * \brief Set the image, rotation, translation and calibration parameters file name
    */
   void openVolumeData();

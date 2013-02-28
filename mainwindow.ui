@@ -121,6 +121,7 @@
     </widget>
     <addaction name="actionCrop_Images"/>
     <addaction name="menuUS_Probe_Calibration"/>
+    <addaction name="actionPivot_Calibration"/>
     <addaction name="actionVolume_Reconstruction"/>
     <addaction name="action3D_Scene_Display"/>
    </widget>
@@ -174,6 +175,11 @@
   <action name="actionCheck_Calibration_Error">
    <property name="text">
     <string>Check Calibration Error</string>
+   </property>
+  </action>
+  <action name="actionPivot_Calibration">
+   <property name="text">
+    <string>Pivot Calibration</string>
    </property>
   </action>
  </widget>
@@ -340,6 +346,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionPivot_Calibration</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>pivotCalibration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>330</x>
+     <y>329</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>addImages()</slot>
@@ -353,5 +375,6 @@
   <slot>cropImages()</slot>
   <slot>display3DScene()</slot>
   <slot>checkCalibrationError()</slot>
+  <slot>pivotCalibration()</slot>
  </slots>
 </ui>

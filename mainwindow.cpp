@@ -5,6 +5,7 @@
 #include "VolumeReconstructionWidget.h"
 #include "CropImagesWidget.h"
 #include "Scene3D.h"
+#include "PivotCalibration.h"
 
 #include <QVBoxLayout>
 #include <vtkEventQtSlotConnect.h>
@@ -150,6 +151,21 @@ void MainWindow::probeCalibration()
 		  "No images loaded, </ br> please load an images before calibrate the probe");
       errorMessage.exec();
     }
+}
+
+void MainWindow::pivotCalibration()
+{
+	std::cout<<"Pivot Calibration"<<std::endl;
+
+	PivotCalibration *app = new PivotCalibration();
+	app->Show();
+
+	while( !app->HasQuitted() )
+	{
+		Fl::wait(0.001);
+		igstk::PulseGenerator::CheckTimeouts();
+	}
+
 }
 
 void MainWindow::checkCalibrationError()

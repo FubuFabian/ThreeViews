@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-PROJECT(Threeviews)
+PROJECT(ThreeViews)
 
 IF(COMMAND CMAKE_POLICY)
 	   CMAKE_POLICY(SET CMP0003 NEW)
@@ -34,14 +34,23 @@ ELSE(IGSTK_FOUND)
 	MESSAGE(FATAL_ERROR "Cannot build US Probe Calibration without IGSTK.  Please set IGSTK_DIR.")
 ENDIF(IGSTK_FOUND)
 
+FIND_PACKAGE(FLTK)
+ IF (FLTK_FOUND)
+  INCLUDE_DIRECTORIES (${FLTK_INCLUDE_DIR})
+ELSE (FLTK_FOUND)
+  MESSAGE( FATAL_ERROR "This application requires FLTK. One of these components is missing. Please verify configuration")
+ENDIF (FLTK_FOUND)
+
 # Find QT 
 FIND_PACKAGE(Qt4 REQUIRED)
 INCLUDE( ${QT_USE_FILE} )
 
 # support for out-of-source build
 INCLUDE_DIRECTORIES(
-  ${CMAKE_CURRENT_BINARY_DIR} #this is where ui_ImageViewerUI.h is generated
+  ${CMAKE_CURRENT_BINARY_DIR} 
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${IGSTK_SOURCE_DIR}/Examples/TransformReaders
+  ${IGSTK_SOURCE_DIR}/Examples/TransformWriters
 )
 
 
@@ -56,7 +65,8 @@ SET(AppSrcs main.cpp mainwindow.cpp QVTKImageWidget.cpp QVTKImageWidgetCommand.c
     CheckCalibrationErrorWidget.cpp vtkTracerInteractorStyle.cpp
     EstimateSphereFromPoints.cpp SphereFunction.cpp igstkUSImageObject.cpp 
     igstkImageSpatialObjectVolumeRepresentation.txx QVTKVolumeSliceWidget.cpp
-    VTKThreeViews.cpp ChangeVolumePropertiesWidget.cpp)
+    VTKThreeViews.cpp ChangeVolumePropertiesWidget.cpp
+PivotCalibration.cpp)
     
 SET(AppHeaders mainwindow.h QVTKImageWidget.h QVTKImageWidgetCommand.h 
     ProbeCalibrationWidget.h Calibration.h VolumeReconstructionWidget.h
@@ -67,12 +77,16 @@ SET(AppHeaders mainwindow.h QVTKImageWidget.h QVTKImageWidgetCommand.h
     CheckCalibrationErrorWidget.h vtkTracerInteractorStyle.h
     EstimateSphereFromPoints.h SphereFunction.h igstkUSImageObject.h 
     igstkImageSpatialObjectVolumeRepresentation.h QVTKVolumeSliceWidget.h
-    VTKThreeViews.h ChangeVolumePropertiesWidget.h)
+    VTKThreeViews.h ChangeVolumePropertiesWidget.h
+PivotCalibration.h)
     
 SET(AppUI mainwindow.ui ProbeCalibrationWidget.ui VolumeReconstructionWidget.ui 
     CropImagesWidget.ui Scene3DWidget.ui CheckCalibrationErrorWidget.ui
     VTKThreeViews.ui ChangeVolumePropertiesWidget.ui)
- 
+
+SET(AppUIFLTK PivotCalibrationUI.fl)
+
+FLTK_WRAP_UI(ThreeViews ${AppUIFLTK}) 
  
 # for generate qt aditional files 
 QT4_WRAP_UI(UISrcs ${AppUI})
@@ -82,14 +96,16 @@ QT4_WRAP_CPP(MOCSrcs ${AppHeaders} )
 # Packaging source code in same files 
 SOURCE_GROUP("Resources" FILES
   ${AppUI}
+  ${AppUIFLTK}
 )
  
 SOURCE_GROUP("Generated" FILES
   ${UISrcs}
   ${MOCSrcs}
+  ${AppUIFLTK}
 )
  
-ADD_EXECUTABLE(ThreeViews ${AppSrcs} ${AppHeaders} ${UISrcs} ${MOCSrcs})
+ADD_EXECUTABLE(ThreeViews ${AppSrcs} ${AppHeaders} ${UISrcs} ${MOCSrcs} ${AppUIFLTK})
 
-TARGET_LINK_LIBRARIES(ThreeViews QVTK IGSTK ${VTK_LIBRARIES} ${ITK_LIBRARIES} LSQRRecipes)
+TARGET_LINK_LIBRARIES(ThreeViews QVTK IGSTK ${VTK_LIBRARIES} ${ITK_LIBRARIES} ${FLTK_LIBRARIES} TransformReaders TransformWriters LSQRRecipes)
 
