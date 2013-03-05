@@ -25,7 +25,8 @@
 
 
 void Scene3D::configTracker(std::string referenceToolFilename, std::string ultrasoundProbeFilename, 
-							std::string needleFilename, std::string pointerFilename, QString probeCalibrationFilename)
+							std::string needleFilename, std::string pointerFilename, QString probeCalibrationFilename,
+							 QString needleCalibrationFilename,  QString pointerCalibrationFilename)
 {
 
 	PolarisTracker* polarisTracker = PolarisTracker::New();
@@ -70,7 +71,7 @@ void Scene3D::configTracker(std::string referenceToolFilename, std::string ultra
 
 
 	std::cout<<std::endl;
-	std::cout<<"Loading Calibration Data"<<std::endl;
+	std::cout<<"Loading Probe Calibration Data"<<std::endl;
 
 	std::vector<double> probeCalibrationData;
 	probeCalibrationData.reserve(8);
@@ -89,10 +90,62 @@ void Scene3D::configTracker(std::string referenceToolFilename, std::string ultra
 			line = stream.readLine();       
 			probeCalibrationData.push_back(line.toDouble());
         }
-		 file.close(); // when your done.	
+		 file.close(); 	
 	}else
 	{
 		 std::cout<<"No Probe Calibration Data Loaded"<<std::endl;
+	}
+
+	std::cout<<std::endl;
+	std::cout<<"Loading Needle Calibration Data"<<std::endl;
+
+	std::vector<double> needleCalibrationData;
+	needleCalibrationData.reserve(3);
+
+	if (!needleCalibrationFilename.isEmpty())
+    {
+        QFile file(needleCalibrationFilename);
+        if (!file.open(QIODevice::ReadOnly))
+           return;
+
+		QTextStream stream(&file);
+        QString line;
+
+		for(int i=0;i<8;i++)
+        {
+			line = stream.readLine();       
+			needleCalibrationData.push_back(line.toDouble());
+        }
+		 file.close(); 	
+	}else
+	{
+		 std::cout<<"No Needle Calibration Data Loaded"<<std::endl;
+	}
+
+	std::cout<<std::endl;
+	std::cout<<"Loading Pointer Calibration Data"<<std::endl;
+
+	std::vector<double> pointerCalibrationData;
+	pointerCalibrationData.reserve(8);
+
+	if (!pointerCalibrationFilename.isEmpty())
+    {
+        QFile file(pointerCalibrationFilename);
+        if (!file.open(QIODevice::ReadOnly))
+           return;
+
+		QTextStream stream(&file);
+        QString line;
+
+		for(int i=0;i<8;i++)
+        {
+			line = stream.readLine();       
+			pointerCalibrationData.push_back(line.toDouble());
+        }
+		 file.close();	
+	}else
+	{
+		 std::cout<<"No Pointer Calibration Data Loaded"<<std::endl;
 	}
 
 	igstk::Transform::ErrorType errorValue;
@@ -115,9 +168,9 @@ void Scene3D::configTracker(std::string referenceToolFilename, std::string ultra
 	igstk::Transform::VersorType needleRotation;
 	igstk::Transform needleTransform;
 
-	needleTranslation[0] = -22.644;
-	needleTranslation[1] = -84.378;
-	needleTranslation[2] = -66.223;
+	needleTranslation[0] = needleCalibrationData[0];
+	needleTranslation[1] = needleCalibrationData[1];
+	needleTranslation[2] = needleCalibrationData[2];
 	needleRotation.Set(0.0, 0.0, 0.0, 1.0 );
 	needleTransform.SetTranslationAndRotation(needleTranslation, needleRotation, errorValue, validityTimeInMilliseconds );
 
@@ -125,9 +178,9 @@ void Scene3D::configTracker(std::string referenceToolFilename, std::string ultra
 	igstk::Transform::VersorType pointerRotation;
 	igstk::Transform pointerTransform;
 
-	pointerTranslation[0] = -20.049;
-	pointerTranslation[1] = 2.026;
-	pointerTranslation[2] = -155.295;
+	pointerTranslation[0] = pointerCalibrationData[0];
+	pointerTranslation[1] = pointerCalibrationData[1];
+	pointerTranslation[2] = pointerCalibrationData[2];
 	pointerRotation.Set(0.0, 0.0, 0.0, 1.0 );
 	pointerTransform.SetTranslationAndRotation(pointerTranslation, pointerRotation, errorValue, validityTimeInMilliseconds);
 

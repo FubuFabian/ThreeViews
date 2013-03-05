@@ -42,7 +42,7 @@ public:
 
 	/** \brief Configure the Polaris tracker
 	* \param[in] ROM files*/
-	void configTracker(std::string, std::string, std::string, std::string, QString);
+	void configTracker(std::string, std::string, std::string, std::string, QString, QString, QString);
 	
 	/** \brief Start Tracking*/
 	void startTracking();

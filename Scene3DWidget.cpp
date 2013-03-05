@@ -67,6 +67,10 @@ void Scene3DWidget::configTracker()
         QDir::currentPath(),tr("Rom Files (*.rom)"));
 	QString probeCalibrationFilename = QFileDialog::getOpenFileName(this, tr("Open Probe Calibration File"),
         QDir::currentPath(),tr("Text (*.txt)"));
+	QString needleCalibrationFilename = QFileDialog::getOpenFileName(this, tr("Open Needle Calibration File"),
+        QDir::currentPath(),tr("Text (*.txt)"));
+	QString pointerCalibrationFilename = QFileDialog::getOpenFileName(this, tr("Open Pointer Calibration File"),
+        QDir::currentPath(),tr("Text (*.txt)"));
 
     std::string referenceToolFilename = std::string(qtReferenceToolFilename.toAscii().data());
     std::string ultrasoundProbeFilename = std::string(qtUltrasoundProbeFilename.toAscii().data());
@@ -74,7 +78,8 @@ void Scene3DWidget::configTracker()
 	std::string pointerFilename = std::string(qtPointerFilename.toAscii().data());
 
 	scene3D->configTracker(referenceToolFilename, ultrasoundProbeFilename, needleFilename, 
-							pointerFilename, probeCalibrationFilename);
+							pointerFilename, probeCalibrationFilename, needleCalibrationFilename,
+							pointerCalibrationFilename);
 
 	ui->initLoggetBt->setEnabled(true);
 	ui->startTrackingBt->setEnabled(true);
