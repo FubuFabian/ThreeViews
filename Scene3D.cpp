@@ -32,7 +32,7 @@ void Scene3D::configTracker(std::string referenceToolFilename, std::string ultra
 	PolarisTracker* polarisTracker = PolarisTracker::New();
 	polarisTracker->setLoggerOn(false);
 	std::cout<<"-Initializing SerialCommunication"<<std::endl;
-	polarisTracker->initializeSerialCommunication(3);
+	polarisTracker->initializeSerialCommunication(2);
 	std::cout<<"-Initializing Tracker"<<std::endl;
 	polarisTracker->initializeTracker();
 	std::cout<<"-Initializing Reference Tracker Tool"<<std::endl;
