@@ -66,7 +66,7 @@ SET(AppSrcs main.cpp mainwindow.cpp QVTKImageWidget.cpp QVTKImageWidgetCommand.c
     EstimateSphereFromPoints.cpp SphereFunction.cpp igstkUSImageObject.cpp 
     igstkImageSpatialObjectVolumeRepresentation.txx QVTKVolumeSliceWidget.cpp
     VTKThreeViews.cpp ChangeVolumePropertiesWidget.cpp
-PivotCalibration.cpp)
+    PivotCalibration.cpp PolarisConfigurationWidget.cpp)
     
 SET(AppHeaders mainwindow.h QVTKImageWidget.h QVTKImageWidgetCommand.h 
     ProbeCalibrationWidget.h Calibration.h VolumeReconstructionWidget.h
@@ -78,11 +78,11 @@ SET(AppHeaders mainwindow.h QVTKImageWidget.h QVTKImageWidgetCommand.h
     EstimateSphereFromPoints.h SphereFunction.h igstkUSImageObject.h 
     igstkImageSpatialObjectVolumeRepresentation.h QVTKVolumeSliceWidget.h
     VTKThreeViews.h ChangeVolumePropertiesWidget.h
-PivotCalibration.h)
+    PivotCalibration.h PolarisConfigurationWidget.h)
     
 SET(AppUI mainwindow.ui ProbeCalibrationWidget.ui VolumeReconstructionWidget.ui 
     CropImagesWidget.ui Scene3DWidget.ui CheckCalibrationErrorWidget.ui
-    VTKThreeViews.ui ChangeVolumePropertiesWidget.ui)
+    VTKThreeViews.ui ChangeVolumePropertiesWidget.ui PolarisConfigurationWidget.ui)
 
 SET(AppUIFLTK PivotCalibrationUI.fl)
 

@@ -14,6 +14,12 @@
 #include "igstkPolarisPointerObject.h"
 #include "igstkUSImageObject.h"
 
+#include "igstkAxesObjectRepresentation.h"
+#include "igstkUSProbeObjectRepresentation.h"
+#include "igstkNeedleObjectRepresentation.h"
+#include "igstkPolarisPointerObjectRepresentation.h"
+#include "igstkImageSpatialObjectVolumeRepresentation.h"
+
 #include "Scene3DWidget.h"
 
 using namespace  std;
@@ -42,7 +48,7 @@ public:
 
 	/** \brief Configure the Polaris tracker
 	* \param[in] ROM files*/
-	void configTracker(std::string, std::string, std::string, std::string, QString, QString, QString);
+	void configTracker(std::string, std::string, std::string, std::string, QString, QString, QString, int);
 	
 	/** \brief Start Tracking*/
 	void startTracking();
@@ -53,9 +59,17 @@ public:
 	/** \brief Add an ultrasound volume to the scene*/
 	void addVolumeToScene(std::string);
 
+	/** \bried Add elements to the for views ins the Scene3DWidget*/
+	void addFourViews();
+
+	/** \bried Set fourViews to false*/
+	void removeFourViews();
+
 private:
 
+	bool volumeLoaded; ///<Indicates if a volume is loaded
 	bool configTrackerFlag; ///<Indicates of the tracker is configure
+	bool fourViews; ///<Indicates if the four views are active
 	TransformType identityTransform; ///<Transformation for the tracked objects
 
 	igstk::AxesObject::Pointer   referenceAxes; ///<Refrence axes object
@@ -77,6 +91,12 @@ private:
 	ObserverType::Pointer coordSystemAObserverPointer; ///<Oberver for the ponter events
 
 	Scene3DWidget * scene3DWidget; ///<User inteface
+
+	igstk::AxesObjectRepresentation::Pointer referenceAxesRepresentation; ///<Representation of Reference Axes Object
+	igstk::USProbeObjectRepresentation::Pointer usProbeRepresentation; ///<Representation of US Probe Object
+	igstk::NeedleObjectRepresentation::Pointer needleRepresentation; ///<Representation of Needle Object
+	igstk::PolarisPointerObjectRepresentation::Pointer pointerRepresentation; ///<Representation of Pointer Object 
+	igstk::ImageSpatialObjectVolumeRepresentation<igstk::USImageObject>::Pointer usVolumeRepresentation; ///<Representation of US Volume Object
 
 
 };

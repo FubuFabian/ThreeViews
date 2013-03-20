@@ -2,6 +2,8 @@
 #define SCENE3DWIDGET_H
 
 #include <QWidget>
+#include <QLayout>
+
 #include "igstkView3D.h"
 #include "igstkQTWidget.h"
 #include "igstkTracker.h"
@@ -31,8 +33,19 @@ public:
     typedef igstk::Tracker TrackerType;
     typedef TrackerType::Pointer TrackerPointer;
 
-    igstk::QTWidget * qtDisplay; ///<A qt widget
-    igstk::View3D::Pointer View; ///<The IGSTK View
+	QGridLayout * layout; //<Layout to display the igstkViews
+    
+	igstk::QTWidget * qtDisplay1; ///<A qt widget
+    igstk::View3D::Pointer View1; ///<The IGSTK View
+
+	igstk::QTWidget * qtDisplay2; ///<A qt widget
+    igstk::View3D::Pointer View2; ///<The IGSTK View
+
+	igstk::QTWidget * qtDisplay3; ///<A qt widget
+    igstk::View3D::Pointer View3; ///<The IGSTK View
+
+	igstk::QTWidget * qtDisplay4; ///<A qt widget
+    igstk::View3D::Pointer View4; ///<The IGSTK View
 
 	/** \brief Show the widget nd start displaying the scene*/
     void Show();
@@ -54,6 +67,7 @@ private:
 
     Ui::Scene3DWidget *ui; ///<The User Interface
     bool quit; ///<Quit Flag
+	bool fourViews; ///<indicates if the four views are on
     TrackerPointer m_Tracker; ///<Polaris Tracker
 	Scene3D* scene3D; ///<Scene3D object with the IGSTK objects
 
@@ -73,6 +87,9 @@ private slots:
 
 	/** \brief Open ultrasound volume*/
 	void openVolume();
+
+	/** \brief display four 3D views of the scene*/
+	void seeFourViews(bool);
 };
 
 #endif // SCENE3DWIDGET_H

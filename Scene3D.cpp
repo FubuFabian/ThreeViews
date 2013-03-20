@@ -17,22 +17,18 @@
 #include <vtkImageChangeInformation.h>
 
 #include <igstkLogger.h>
-#include <igstkAxesObjectRepresentation.h>
-#include <igstkUSProbeObjectRepresentation.h>
-#include <igstkNeedleObjectRepresentation.h>
-#include <igstkPolarisPointerObjectRepresentation.h>
-#include <igstkImageSpatialObjectVolumeRepresentation.h>
+
 
 
 void Scene3D::configTracker(std::string referenceToolFilename, std::string ultrasoundProbeFilename, 
 							std::string needleFilename, std::string pointerFilename, QString probeCalibrationFilename,
-							 QString needleCalibrationFilename,  QString pointerCalibrationFilename)
+							 QString needleCalibrationFilename,  QString pointerCalibrationFilename, int port)
 {
 
 	PolarisTracker* polarisTracker = PolarisTracker::New();
 	polarisTracker->setLoggerOn(false);
 	std::cout<<"-Initializing SerialCommunication"<<std::endl;
-	polarisTracker->initializeSerialCommunication(2);
+	polarisTracker->initializeSerialCommunication(port);
 	std::cout<<"-Initializing Tracker"<<std::endl;
 	polarisTracker->initializeTracker();
 	std::cout<<"-Initializing Reference Tracker Tool"<<std::endl;
@@ -201,14 +197,14 @@ void Scene3D::startTracking()
 {
 	if(configTrackerFlag)
 	{
-		scene3DWidget->View->RequestSetTransformAndParent(identityTransform, referenceTool);
-		scene3DWidget->View->RequestResetCamera();
-		scene3DWidget->View->SetCameraFocalPoint( 0.0, 290.0 ,150.0 );
-		scene3DWidget->View->SetCameraPosition( 700.0, -150.0 , 150.0 );
-		scene3DWidget->View->SetCameraViewUp( 0.0, 0.0 , 1.0 );
-		scene3DWidget->View->SetCameraClippingRange( 10.0 , 2000.0 );
-		scene3DWidget->View->SetCameraParallelProjection( false );
-		scene3DWidget->View->SetRendererBackgroundColor(185.0/255.0,215.0/255.0,249.0/255.0);
+		scene3DWidget->View1->RequestSetTransformAndParent(identityTransform, referenceTool);
+		scene3DWidget->View1->RequestResetCamera();
+		scene3DWidget->View1->SetCameraFocalPoint( 0.0, 290.0 ,150.0 );
+		scene3DWidget->View1->SetCameraPosition( 700.0, -150.0 , 150.0 );
+		scene3DWidget->View1->SetCameraViewUp( 0.0, 0.0 , 1.0 );
+		scene3DWidget->View1->SetCameraClippingRange( 10.0 , 2000.0 );
+		scene3DWidget->View1->SetCameraParallelProjection( false );
+		scene3DWidget->View1->SetRendererBackgroundColor(183.0/255.0,197.0/255.0,253.0/255.0);
 
 		typedef ::itk::Vector<double, 3>    VectorType;
 		typedef ::itk::Versor<double>       VersorType;
@@ -283,7 +279,7 @@ void Scene3D::initLogger()
 		fileOutput->SetStream(ofs);
 		logger->AddLogOutput( fileOutput );
 
-		scene3DWidget->qtDisplay->SetLogger( logger );
+		scene3DWidget->qtDisplay1->SetLogger( logger );
 		tracker->SetLogger(logger);
 	}else{
 		QErrorMessage errorMessage;
@@ -309,33 +305,31 @@ void Scene3D::init3DScene()
 
     referenceAxes->SetSize(100,100,100);
 	
-	igstk::AxesObjectRepresentation::Pointer referenceAxesRepresentation =
-		igstk::AxesObjectRepresentation::New();
+	referenceAxesRepresentation = igstk::AxesObjectRepresentation::New();
 	referenceAxesRepresentation->RequestSetAxesObject(referenceAxes);
 
-	igstk::USProbeObjectRepresentation::Pointer usProbeRepresentation = 
-		igstk::USProbeObjectRepresentation::New();
+	usProbeRepresentation = igstk::USProbeObjectRepresentation::New();
 	usProbeRepresentation->RequestSetUSProbeObject(usProbe);
 
-	igstk::NeedleObjectRepresentation::Pointer needleRepresentation = 
-		igstk::NeedleObjectRepresentation::New();
+	needleRepresentation = igstk::NeedleObjectRepresentation::New();
 	needleRepresentation->RequestSetNeedleObject(needle);
 
-	igstk::PolarisPointerObjectRepresentation::Pointer pointerRepresentation = 
-		igstk::PolarisPointerObjectRepresentation::New();
+	pointerRepresentation = igstk::PolarisPointerObjectRepresentation::New();
 	pointerRepresentation->RequestSetPolarisPointerObject(pointer);
 
 
-	scene3DWidget->View->RequestAddObject(referenceAxesRepresentation);
-	scene3DWidget->View->RequestAddObject(usProbeRepresentation);
-	scene3DWidget->View->RequestAddObject(needleRepresentation);
-	scene3DWidget->View->RequestAddObject(pointerRepresentation);
+	scene3DWidget->View1->RequestAddObject(referenceAxesRepresentation);
+	scene3DWidget->View1->RequestAddObject(usProbeRepresentation);
+	scene3DWidget->View1->RequestAddObject(needleRepresentation);
+	scene3DWidget->View1->RequestAddObject(pointerRepresentation);
 
-	scene3DWidget->qtDisplay->RequestEnableInteractions();
+	scene3DWidget->qtDisplay1->RequestEnableInteractions();
 
 	scene3DWidget->Show();
 
 	configTrackerFlag = false;
+	volumeLoaded = false;
+	fourViews = false;
 }
 
 void Scene3D::addVolumeToScene(std::string volumeFilename)
@@ -356,8 +350,7 @@ void Scene3D::addVolumeToScene(std::string volumeFilename)
 	changeInformation->Update();
 	usVolume->volumeData =  volumeData;
 
-	igstk::ImageSpatialObjectVolumeRepresentation<igstk::USImageObject>::Pointer usVolumeRepresentation =
-		igstk::ImageSpatialObjectVolumeRepresentation<igstk::USImageObject>::New();
+	usVolumeRepresentation = igstk::ImageSpatialObjectVolumeRepresentation<igstk::USImageObject>::New();
 	usVolumeRepresentation->RequestSetImageSpatialObject(usVolume);
 
 	ChangeVolumePropertiesWidget * propertiesChanger = new ChangeVolumePropertiesWidget();
@@ -380,7 +373,79 @@ void Scene3D::addVolumeToScene(std::string volumeFilename)
 	usVolumeRotation.Set(0.0, 0.0, 0.0, 1.0 );
 	usVolumeTransform.SetTranslationAndRotation(usVolumeTranslation, usVolumeRotation, errorValue, validityTimeInMilliseconds);
 
-	scene3DWidget->View->RequestAddObject(usVolumeRepresentation);
+	scene3DWidget->View1->RequestAddObject(usVolumeRepresentation);
+
+	if (fourViews){
+		scene3DWidget->View2->RequestAddObject(usVolumeRepresentation);
+		scene3DWidget->View3->RequestAddObject(usVolumeRepresentation);
+		scene3DWidget->View4->RequestAddObject(usVolumeRepresentation);
+	}
+
 	usVolume->RequestSetTransformAndParent(usVolumeTransform, referenceTool);
 
+	volumeLoaded = true;
+
+}
+
+void Scene3D::addFourViews()
+{
+	scene3DWidget->View2->RequestSetTransformAndParent(identityTransform, referenceTool);
+	scene3DWidget->View2->RequestResetCamera();
+	scene3DWidget->View2->SetCameraFocalPoint( 290.0, 0.0 ,150.0 );
+	scene3DWidget->View2->SetCameraPosition( -150.0 , 700.0 , 150.0 );
+	scene3DWidget->View2->SetCameraViewUp( 0.0, 0.0 , 1.0 );
+	scene3DWidget->View2->SetCameraClippingRange( 10.0 , 2000.0 );
+	scene3DWidget->View2->SetCameraParallelProjection( false );
+	scene3DWidget->View2->SetRendererBackgroundColor(183.0/255.0,197.0/255.0,253.0/255.0);
+
+	scene3DWidget->View3->RequestSetTransformAndParent(identityTransform, referenceTool);
+	scene3DWidget->View3->RequestResetCamera();
+	scene3DWidget->View3->SetCameraFocalPoint( 110.0, 110.0 , 0.0 );
+	scene3DWidget->View3->SetCameraPosition( 80.0, 80.0 , 700.0 );
+	scene3DWidget->View3->SetCameraViewUp( 0.0, 0.0 , 0.5 );
+	scene3DWidget->View3->SetCameraClippingRange( 10.0 , 2000.0 );
+	scene3DWidget->View3->SetCameraParallelProjection( false );
+	scene3DWidget->View3->SetRendererBackgroundColor(183.0/255.0,197.0/255.0,253.0/255.0);
+
+	scene3DWidget->View4->RequestSetTransformAndParent(identityTransform, referenceTool);
+	scene3DWidget->View4->RequestResetCamera();
+	scene3DWidget->View4->SetCameraFocalPoint( 110.0, 110.0 , 0.0 );
+	scene3DWidget->View4->SetCameraPosition( 80.0, 80.0 , -700.0 );
+	scene3DWidget->View4->SetCameraViewUp( 0.0, 0.0 , 0.5 );
+	scene3DWidget->View4->SetCameraClippingRange( 10.0 , 2000.0 );
+	scene3DWidget->View4->SetCameraParallelProjection( false );
+	scene3DWidget->View4->SetRendererBackgroundColor(183.0/255.0,197.0/255.0,253.0/255.0);
+
+	scene3DWidget->View2->RequestAddObject(referenceAxesRepresentation->Copy());
+	scene3DWidget->View2->RequestAddObject(usProbeRepresentation->Copy());
+	scene3DWidget->View2->RequestAddObject(needleRepresentation->Copy());
+	scene3DWidget->View2->RequestAddObject(pointerRepresentation->Copy());
+
+	scene3DWidget->View3->RequestAddObject(referenceAxesRepresentation->Copy());
+	scene3DWidget->View3->RequestAddObject(usProbeRepresentation->Copy());
+	scene3DWidget->View3->RequestAddObject(needleRepresentation->Copy());
+	scene3DWidget->View3->RequestAddObject(pointerRepresentation->Copy());
+
+	scene3DWidget->View4->RequestAddObject(referenceAxesRepresentation->Copy());
+	scene3DWidget->View4->RequestAddObject(usProbeRepresentation->Copy());
+	scene3DWidget->View4->RequestAddObject(needleRepresentation->Copy());
+	scene3DWidget->View4->RequestAddObject(pointerRepresentation->Copy());
+
+	scene3DWidget->qtDisplay2->RequestEnableInteractions();
+	scene3DWidget->qtDisplay3->RequestEnableInteractions();
+	scene3DWidget->qtDisplay4->RequestEnableInteractions();
+
+	if (volumeLoaded){
+		scene3DWidget->View2->RequestAddObject(usVolumeRepresentation);
+		scene3DWidget->View3->RequestAddObject(usVolumeRepresentation);
+		scene3DWidget->View4->RequestAddObject(usVolumeRepresentation);
+	}
+
+	fourViews = true;
+
+}
+
+void Scene3D::removeFourViews()
+{
+	fourViews = false;
 }

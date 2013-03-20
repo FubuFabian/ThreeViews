@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>957</width>
-    <height>684</height>
+    <width>1005</width>
+    <height>719</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,7 +36,7 @@
       <enum>QLayout::SetMinAndMaxSize</enum>
      </property>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="configTrackerBtn">
        <property name="maximumSize">
         <size>
          <width>158</width>
@@ -221,6 +221,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="fourViewsBtn">
+       <property name="text">
+        <string>Four Views</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="quitBt">
        <property name="maximumSize">
         <size>
@@ -247,11 +257,11 @@
    <slot>startTracking()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1171</x>
-     <y>41</y>
+     <x>992</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1174</x>
+     <x>1004</x>
      <y>104</y>
     </hint>
    </hints>
@@ -263,27 +273,27 @@
    <slot>Quit()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1179</x>
-     <y>765</y>
+     <x>992</x>
+     <y>678</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1180</x>
+     <x>1004</x>
      <y>620</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
+   <sender>configTrackerBtn</sender>
    <signal>clicked()</signal>
    <receiver>Scene3DWidget</receiver>
    <slot>configTracker()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1239</x>
-     <y>44</y>
+     <x>992</x>
+     <y>53</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1136</x>
+     <x>1004</x>
      <y>16</y>
     </hint>
    </hints>
@@ -295,11 +305,11 @@
    <slot>initLogger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1239</x>
-     <y>172</y>
+     <x>992</x>
+     <y>151</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1261</x>
+     <x>1004</x>
      <y>192</y>
     </hint>
    </hints>
@@ -311,12 +321,28 @@
    <slot>openVolume()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1210</x>
-     <y>525</y>
+     <x>992</x>
+     <y>586</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1208</x>
+     <x>1004</x>
      <y>591</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fourViewsBtn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Scene3DWidget</receiver>
+   <slot>seeFourViews(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>879</x>
+     <y>623</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>832</x>
+     <y>714</y>
     </hint>
    </hints>
   </connection>
@@ -327,5 +353,6 @@
   <slot>configTracker()</slot>
   <slot>initLogger()</slot>
   <slot>openVolume()</slot>
+  <slot>seeFourViews(bool)</slot>
  </slots>
 </ui>

@@ -14,7 +14,7 @@ vtkSmartPointer<vtkImageData> VolumeReconstruction::generateVolume()
 	vtkSmartPointer<vtkImageData> volumeData = vtkSmartPointer<vtkImageData>::New();
 	volumeData->SetNumberOfScalarComponents(1);
 	volumeData->SetScalarType(VTK_UNSIGNED_CHAR);
-	volumeData->SetOrigin(0,0,0);
+	volumeData->SetOrigin(volumeOrigin[0],volumeOrigin[1],volumeOrigin[2]);
 	volumeData->SetDimensions(volumeSize[0],volumeSize[1],volumeSize[2]);
 	volumeData->SetSpacing(scale[0]*resolution,scale[0]*resolution,scale[0]*resolution);
 	volumeData->AllocateScalars();
